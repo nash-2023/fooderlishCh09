@@ -7,6 +7,8 @@ import 'recipes/recipe_list.dart';
 import 'shopping/shopping_list.dart';
 import 'package:flutter/material.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
@@ -17,7 +19,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   List<Widget> pageList = <Widget>[];
-  // TODO: Add index key
+  static const String prefSelectedIndexKey = 'selectedIndex';
 
   @override
   void initState() {
@@ -25,18 +27,36 @@ class _MainScreenState extends State<MainScreen> {
     pageList.add(const RecipeList());
     pageList.add(const MyRecipesList());
     pageList.add(const ShoppingList());
-    // TODO: Call getCurrentIndex
+    getCurrentIndex();
   }
 
-  // TODO: Add saveCurrentIndex
+  void saveCurrentIndex() async {
+// 1
+    final prefs = await SharedPreferences.getInstance();
+// 2
+    prefs.setInt(prefSelectedIndexKey, _selectedIndex);
+  }
 
-  // TODO: Add getCurrentIndex
+  void getCurrentIndex() async {
+// 1
+    final prefs = await SharedPreferences.getInstance();
+// 2
+    if (prefs.containsKey(prefSelectedIndexKey)) {
+// 3
+      setState(() {
+        final index = prefs.getInt(prefSelectedIndexKey);
+        if (index != null) {
+          _selectedIndex = index;
+        }
+      });
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    // TODO: Call saveCurrentIndex
+    saveCurrentIndex();
   }
 
   @override
@@ -59,21 +79,21 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/images/icon_recipe.svg',
-                  color: _selectedIndex == 0 ? green : Colors.grey,
-                  semanticsLabel: 'Recipes'),
-              label: 'Recipes'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/images/icon_bookmarks.svg',
-                  color: _selectedIndex == 1 ? green : Colors.grey,
-                  semanticsLabel: 'Bookmarks'),
-              label: 'Bookmarks'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset('assets/images/icon_shopping_list.svg',
-                  color: _selectedIndex == 2 ? green : Colors.grey,
-                  semanticsLabel: 'Groceries'),
-              label: 'Groceries'),
+          btmNvBrItmGenerator(
+            'assets/images/icon_recipe.svg',
+            'Recipes',
+            0,
+          ),
+          btmNvBrItmGenerator(
+            'assets/images/icon_bookmarks.svg',
+            'Bookmarks',
+            1,
+          ),
+          btmNvBrItmGenerator(
+            'assets/images/icon_shopping_list.svg',
+            'Groceries',
+            2,
+          ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: green,
@@ -103,5 +123,14 @@ class _MainScreenState extends State<MainScreen> {
         children: pageList,
       ),
     );
+  }
+
+  BottomNavigationBarItem btmNvBrItmGenerator(
+      String xbath, String xname, int idx) {
+    return BottomNavigationBarItem(
+        icon: SvgPicture.asset(xbath,
+            color: _selectedIndex == idx ? green : Colors.grey,
+            semanticsLabel: xname),
+        label: xname);
   }
 }
