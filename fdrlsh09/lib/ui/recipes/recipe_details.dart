@@ -1,11 +1,12 @@
+import 'package:fdrlsh09/network/recipe_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../colors.dart';
 
 class RecipeDetails extends StatelessWidget {
-  const RecipeDetails({Key? key}) : super(key: key);
-
+  const RecipeDetails({Key? key, required this.recipe}) : super(key: key);
+  final APIRecipe recipe;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +22,7 @@ class RecipeDetails extends StatelessWidget {
                     Align(
                       alignment: Alignment.topLeft,
                       // TODO 1
-                      child: Image.asset(
+                      child: Image.network(
                         'assets/images/pizza_w700.png',
                         height: 200,
                         width: 200,
@@ -42,22 +43,22 @@ class RecipeDetails extends StatelessWidget {
                 const SizedBox(
                   height: 16,
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(left: 16.0),
                   child: Text(
                     // TODO 2
-                    'Chicken Vesuvio',
+                    recipe.label,
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(
                   height: 16,
                 ),
-                const Padding(
+                Padding(
                     padding: EdgeInsets.only(left: 16.0),
                     child: Chip(
                       // TODO 3
-                      label: Text('16CAL'),
+                      label: Text(getCalories(recipe.calories)),
                     )),
                 const SizedBox(
                   height: 16,

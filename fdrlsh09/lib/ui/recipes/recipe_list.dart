@@ -36,7 +36,6 @@ class _RecipeListState extends State<RecipeList> {
   void initState() {
     super.initState();
     loadRecipes();
-
     getPreviousSearches();
     searchTextController = TextEditingController(text: '');
     _scrollController.addListener(() {
@@ -227,10 +226,10 @@ class _RecipeListState extends State<RecipeList> {
     print(_currentRecipes1!.hits.length);
     return Flexible(
       child: ListView.builder(
-        itemCount: 1,
+        itemCount: _currentRecipes1!.hits.length,
         itemBuilder: (BuildContext context, int index) {
           return Center(
-              child: _buildRecipeCard(context, _currentRecipes1!.hits, 0));
+              child: _buildRecipeCard(context, _currentRecipes1!.hits, index));
         },
       ),
     );
@@ -244,7 +243,7 @@ class _RecipeListState extends State<RecipeList> {
       onTap: () {
         Navigator.push(topLevelContext, MaterialPageRoute(
           builder: (context) {
-            return const RecipeDetails();
+            return RecipeDetails(recipe: hits[index].recipe);
           },
         ));
       },
